@@ -252,6 +252,7 @@ class FunkinLua {
 		});
 
 		// shader shit
+		#if windows
 		Lua_helper.add_callback(lua, "initLuaShader", function(name:String, glslVersion:Int = 120) {
 			if(!ClientPrefs.shaders) return false;
 
@@ -262,6 +263,7 @@ class FunkinLua {
 			#end
 			return false;
 		});
+		#end
 		
 		Lua_helper.add_callback(lua, "setSpriteShader", function(obj:String, shader:String) {
 			if(!ClientPrefs.shaders) return false;
@@ -2918,7 +2920,8 @@ class FunkinLua {
 		return null;
 	}
 	#end
-	
+
+	#if windows
 	function initLuaShader(name:String, ?glslVersion:Int = 120)
 	{
 		if(!ClientPrefs.shaders) return false;
@@ -2972,6 +2975,7 @@ class FunkinLua {
 		#end
 		return false;
 	}
+	#end
 
 	function getGroupStuff(leArray:Dynamic, variable:String) {
 		var killMe:Array<String> = variable.split('.');
