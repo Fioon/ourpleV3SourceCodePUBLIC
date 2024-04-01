@@ -1465,6 +1465,7 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
+        #if windows
 	public function initLuaShader(name:String, ?glslVersion:Int = 120)
 	{
 		if(!ClientPrefs.shaders) return false;
@@ -1514,6 +1515,7 @@ class PlayState extends MusicBeatState
 		FlxG.log.warn('Missing shader $name .frag AND .vert files!');
 		return false;
 	}
+	#end
 	#end
 
 	function set_songSpeed(value:Float):Float
