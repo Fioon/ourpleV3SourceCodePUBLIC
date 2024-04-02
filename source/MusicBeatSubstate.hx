@@ -7,10 +7,12 @@ import flixel.FlxBasic;
 import flixel.FlxSprite;
 
 #if android
+import android.AndroidControls;
+import android.flixel.FlxVirtualPad;
 import flixel.input.actions.FlxActionInput;
-import android.FlxVirtualPad;
+import flixel.util.FlxDestroyUtil;
 #end
-
+	
 class MusicBeatSubstate extends FlxSubState
 {
 	public function new()
@@ -32,45 +34,57 @@ class MusicBeatSubstate extends FlxSubState
 		return PlayerSettings.player1.controls;
 
 	#if android
-	var _virtualpad:FlxVirtualPad;
+	var virtualPad:FlxVirtualPad;
 	var trackedinputsUI:Array<FlxActionInput> = [];
-	var trackedinputsNOTES:Array<FlxActionInput> = [];
-	#end
-	
-	#if android
-	public function addVirtualPad(?DPad:FlxDPadMode, ?Action:FlxActionMode) {
-		_virtualpad = new FlxVirtualPad(DPad, Action, 0.75, ClientPrefs.globalAntialiasing);
-		add(_virtualpad);
-		controls.setVirtualPadUI(_virtualpad, DPad, Action);
+
+	public function addVirtualPad(DPad:FlxDPadMode, Action:FlxActionMode)
+	{
+		virtualPad = new FlxVirtualPad(DPad, Action);
+		add(virtualPad);
+
+		controls.setVirtualPadUI(virtualPad, DPad, Action);
 		trackedinputsUI = controls.trackedinputsUI;
 		controls.trackedinputsUI = [];
 	}
-	#end
 
-	#if android
-	public function removeVirtualPad() {
-		controls.removeFlxInput(trackedinputsUI);
-		remove(_virtualpad);
+	public function removeVirtualPad()
+	{
+		if (trackedinputsUI != [])
+			controls.removeFlxInput(trackedinputsUI);
+
+		if (virtualPad != null)
+			remove(virtualPad);
+	}
+
+	public function addPadCamera()
+	{
+		if (virtualPad != null)
+		{
+			var camControls = new flixel.FlxCamera();
+			FlxG.cameras.add(camControls);
+			camControls.bgColor.alpha = 0;
+			virtualPad.cameras = [camControls];
+			FlxG.cameras.setDefaultDrawTarget(camControls, false);
+		}
 	}
 	#end
 
-	#if android
-		public function addPadCamera() {
-		var camcontrol = new flixel.FlxCamera();
-		camcontrol.bgColor.alpha = 0;
-		FlxG.cameras.add(camcontrol, false);
-		_virtualpad.cameras = [camcontrol];
-	        FlxG.cameras.setDefaultDrawTarget(camcontrol, false);
-	}
-	#end
-	
-	override function destroy() {
+	override function destroy()
+	{
 		#if android
-		controls.removeFlxInput(trackedinputsUI);
-		controls.removeFlxInput(trackedinputsNOTES);
+		if (trackedinputsUI != [])
+			controls.removeFlxInput(trackedinputsUI);
 		#end
 
 		super.destroy();
+
+		#if android
+		if (virtualPad != null)
+		{
+			virtualPad = FlxDestroyUtil.destroy(virtualPad);
+			virtualPad = null;
+		}
+		#end
 	}
 
 	override function update(elapsed:Float)
