@@ -126,6 +126,7 @@ class Main extends Sprite
 	#if CRASH_HANDLER
 	function onCrash(e:UncaughtErrorEvent):Void
 	{
+	        #if windows
 		var errMsg:String = "";
 		var path:String;
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
@@ -160,6 +161,60 @@ class Main extends Sprite
 		Application.current.window.alert(errMsg, "Error!");
 		DiscordClient.shutdown();
 		Sys.exit(1);
+		#end
+
+		#if android
+		var errMsg:String = "";
+		var path:String;
+		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
+		var dateNow:String = Date.now().toString();
+
+		dateNow = StringTools.replace(dateNow, " ", "_");
+		dateNow = StringTools.replace(dateNow, ":", "'");
+
+		path = SUtil.getPath() + "crash/" + "FE_" + dateNow + ".txt";
+
+		for (stackItem in callStack)
+		{
+			switch (stackItem)
+			{
+				case FilePos(s, file, line, column):
+					errMsg += file + " (line " + line + ")\n";
+				default:
+					Sys.println(stackItem);
+			}
+		}
+
+		errMsg += "\nUncaught Error: " + e.error + "\nPlease report this error to the GitHub page: https://github.com/Yoshubs/Forever-Engine";
+
+		if (!FileSystem.exists(SUtil.getPath() + "crash/"))
+			FileSystem.createDirectory(SUtil.getPath() + "crash/");
+
+		File.saveContent(path, errMsg + "\n");
+
+		Sys.println(errMsg);
+		Sys.println("Crash dump saved in " + Path.normalize(path));
+
+		var crashDialoguePath:String = SUtil.getPath() + "FE-CrashDialog";
+
+		#if windows
+		crashDialoguePath += ".exe";
+		#end
+
+		if (FileSystem.exists(crashDialoguePath))
+		{
+			Sys.println("Found crash dialog: " + crashDialoguePath);
+			new Process(crashDialoguePath, [path]);
+		}
+		else
+		{
+			Sys.println("No crash dialog found! Making a simple alert instead...");
+			Application.current.window.alert(errMsg, "Error!");
+		}
+
+		Application.current.window.alert(errMsg, "Apk Error!");
+		Sys.exit(1);
+		#end
 	}
 	#end
 }
