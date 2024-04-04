@@ -724,9 +724,9 @@ class Controls extends FlxActionSet
 		}*/
 
 		#if (haxe >= "4.0.0")
-		inline forEachBound(control, (action, state) -> addKeys(action, copyKeys, state));
+		inline forEachBound(control, (action, state) -> addKeys(action, keys, state));
 		#else
-		forEachBound(control, function(action, state) addKeys(action, copyKeys, state));
+		forEachBound(control, function(action, state) addKeys(action, keys, state));
 		#end
 	}
 
@@ -742,9 +742,9 @@ class Controls extends FlxActionSet
 		}*/
 
 		#if (haxe >= "4.0.0")
-		inline forEachBound(control, (action, _) -> removeKeys(action, copyKeys));
+		inline forEachBound(control, (action, _) -> removeKeys(action, keys));
 		#else
-		forEachBound(control, function(action, _) removeKeys(action, copyKeys));
+		forEachBound(control, function(action, _) removeKeys(action, keys));
 		#end
 	}
 
