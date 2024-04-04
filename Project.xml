@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
+	<!-- _____________________________ Android Section ____________________________ -->
+	<!--define name="MOBILE_CONTROLS" if="android"/-->
+	<assets path="assets/android"/>
+
+	<android target-sdk-version = "29"/>
 	<!-- _________________________ Application Settings _________________________ -->
 
 	<app title="Vs. Ourple Guy V3" file="VsOurpleGuy" packageName="com.shadowmario.psychengine" package="com.shadowmario.psychengine" main="Main" version="0.2.8" company="OurpleCo" />
