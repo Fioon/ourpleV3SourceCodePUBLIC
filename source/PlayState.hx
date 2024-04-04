@@ -410,6 +410,10 @@ class PlayState extends MusicBeatState
 			'NOTE_RIGHT'
 		];
 
+		#if android
+		addAndroidControls();
+		#end
+		
 		//Ratings
 		ratingsData.push(new Rating('sick')); //default rating
 
@@ -2501,6 +2505,10 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.onComplete = finishSong.bind();
 		vocals.play();
 
+		#if android
+		androidControls.visible = true;
+		#end
+			
 		if(startOnTime > 0)
 		{
 			setSongTime(startOnTime - 500);
@@ -4810,6 +4818,10 @@ class PlayState extends MusicBeatState
 	{
 		var finishCallback:Void->Void = endSong; //In case you want to change it in a specific song.
 
+		#if android
+		androidControls.visible = false;
+		#end
+			
 		updateTime = false;
 		FlxG.sound.music.volume = 0;
 		vocals.volume = 0;
@@ -4828,6 +4840,10 @@ class PlayState extends MusicBeatState
 	public var notSeenEndingCutscene:Bool = true;
 	public function endSong():Void
 	{
+		#if android
+		androidControls.visible = false;
+		#end
+			
 		//Should kill you if you tried to cheat
 		if(!startingSong) {
 			notes.forEach(function(daNote:Note) {
