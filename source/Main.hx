@@ -17,14 +17,12 @@ import Discord.DiscordClient;
 #end
 
 //crash handler stuff
-#if CRASH_HANDLER
 import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
-#end
 
 using StringTools;
 
@@ -88,11 +86,16 @@ class Main extends Sprite
 			game.height = Math.ceil(stageHeight / game.zoom);
 		}
 
+		#if android
+		game.width = 1280;
+		game.height = 720;
+		game.zoom = 1;
+		#end
+
 		SUtil.doTheCheck();
 		ClientPrefs.loadDefaultKeys();
 		addChild(new FlxGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
-		#if !mobile
 		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
 		Lib.current.stage.align = "tl";
@@ -100,16 +103,13 @@ class Main extends Sprite
 		if(fpsVar != null) {
 			fpsVar.visible = ClientPrefs.showFPS;
 		}
-		#end
 
 		#if html5
 		FlxG.autoPause = false;
 		FlxG.mouse.visible = false;
 		#end
 		
-		#if CRASH_HANDLER
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
-		#end
 
 		#if desktop
 		if (!DiscordClient.isInitialized) {
@@ -123,7 +123,6 @@ class Main extends Sprite
 
 	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!
 	// very cool person for real they don't get enough credit for their work
-	#if CRASH_HANDLER
 	function onCrash(e:UncaughtErrorEvent):Void
 	{
 	        #if windows
@@ -216,5 +215,4 @@ class Main extends Sprite
 		Sys.exit(1);
 		#end
 	}
-	#end
 }
